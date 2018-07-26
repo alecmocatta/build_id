@@ -35,10 +35,11 @@
 #![allow(intra_doc_link_resolution_failure)]
 
 extern crate byteorder;
+extern crate proc_self;
 extern crate twox_hash;
 extern crate uuid;
 
-use std::{env, fs, hash::Hasher, io, sync};
+use std::{hash::Hasher, io, sync};
 use uuid::Uuid;
 
 static mut BUILD_ID: Uuid = Uuid::nil();
@@ -85,15 +86,26 @@ pub fn get() -> Uuid {
 	}
 }
 fn calculate() -> Uuid {
+	let mut hasher = twox_hash::XxHash::with_seed(0);
+
+	// let a = |x:()|x;
+	// let b = |x:u8|x;
+	// hasher.write_u64(type_id(&a));
+	// hasher.write_u64(type_id(&b));
+
 	// LC_UUID https://opensource.apple.com/source/libsecurity_codesigning/libsecurity_codesigning-55037.6/lib/machorep.cpp https://stackoverflow.com/questions/10119700/how-to-get-mach-o-uuid-of-a-running-process
 	// .note.gnu.build-id https://github.com/golang/go/issues/21564 https://github.com/golang/go/blob/178307c3a72a9da3d731fecf354630761d6b246c/src/cmd/go/internal/buildid/buildid.go
-	let file = fs::File::open(env::current_exe().unwrap()).unwrap();
-	let mut hasher = twox_hash::XxHash::with_seed(0);
+	let file = proc_self::exe().unwrap();
 	io::copy(&mut &file, &mut HashWriter(&mut hasher)).unwrap();
+
 	let mut bytes = [0; 16];
-	<byteorder::LittleEndian as byteorder::ByteOrder>::write_u64(&mut bytes, hasher.finish());
+	<byteorder::NativeEndian as byteorder::ByteOrder>::write_u64(&mut bytes, hasher.finish());
 	Uuid::from_random_bytes(bytes)
 }
+
+// fn type_id<T:'static>(_: &T) -> u64 {
+// 	unsafe{intrinsics::type_id::<T>()}
+// }
 
 struct HashWriter<T: Hasher>(T);
 impl<T: Hasher> io::Write for HashWriter<T> {

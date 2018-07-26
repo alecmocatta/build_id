@@ -23,7 +23,7 @@ segments or layout.
 and layout but differ immaterially (e.g. if a timestamp is included in the
 binary at compile time).
 
-# Examples
+## Examples
 
 ```rust
 let local_build_id = build_id::get();
@@ -34,7 +34,7 @@ if local_build_id == remote_build_id {
 }
 ```
 
-# Note
+## Note
 
 This looks first for linker-inserted build ID / binary UUIDs (i.e.
 `.note.gnu.build-id` on Linux; `LC_UUID` in Mach-O; etc), falling back to
