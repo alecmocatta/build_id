@@ -6,7 +6,7 @@
 [![Build Status](https://circleci.com/gh/alecmocatta/build_id/tree/master.svg?style=shield)](https://circleci.com/gh/alecmocatta/build_id)
 [![Build Status](https://travis-ci.com/alecmocatta/build_id.svg?branch=master)](https://travis-ci.com/alecmocatta/build_id)
 
-[Docs](https://docs.rs/build_id/0.1.0)
+[Docs](https://docs.rs/build_id/0.1.1)
 
 Obtain a [`Uuid`](https://docs.rs/uuid/0.6/uuid/) uniquely representing the
 build of the current binary.
