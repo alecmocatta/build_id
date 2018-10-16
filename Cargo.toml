@@ -22,7 +22,7 @@ travis-ci = { repository = "alecmocatta/build_id" }
 maintenance = { status = "actively-developed" }
 
 [dependencies]
-proc_self = "0.1"
 uuid = {version = "0.6", features = ["const_fn"]}
 twox-hash = "1.1"
 byteorder = "1.2"
+proc_self = { version =  "0.1" } #, path = "../proc_self" }

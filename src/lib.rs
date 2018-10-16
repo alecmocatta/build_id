@@ -31,8 +31,18 @@
 //! hashing the whole binary.
 
 #![doc(html_root_url = "https://docs.rs/build_id/0.1.1")]
-#![deny(missing_docs, warnings, deprecated)]
-#![allow(intra_doc_link_resolution_failure)]
+#![warn(
+	missing_copy_implementations,
+	missing_debug_implementations,
+	missing_docs,
+	trivial_numeric_casts,
+	unused_extern_crates,
+	unused_import_braces,
+	unused_qualifications,
+	unused_results,
+	clippy::pedantic
+)] // from https://github.com/rust-unofficial/patterns/blob/master/anti_patterns/deny-warnings.md
+#![allow(clippy::stutter)]
 
 extern crate byteorder;
 extern crate proc_self;
@@ -96,7 +106,7 @@ fn calculate() -> Uuid {
 	// LC_UUID https://opensource.apple.com/source/libsecurity_codesigning/libsecurity_codesigning-55037.6/lib/machorep.cpp https://stackoverflow.com/questions/10119700/how-to-get-mach-o-uuid-of-a-running-process
 	// .note.gnu.build-id https://github.com/golang/go/issues/21564 https://github.com/golang/go/blob/178307c3a72a9da3d731fecf354630761d6b246c/src/cmd/go/internal/buildid/buildid.go
 	let file = proc_self::exe().unwrap();
-	io::copy(&mut &file, &mut HashWriter(&mut hasher)).unwrap();
+	let _ = io::copy(&mut &file, &mut HashWriter(&mut hasher)).unwrap();
 
 	let mut bytes = [0; 16];
 	<byteorder::NativeEndian as byteorder::ByteOrder>::write_u64(&mut bytes, hasher.finish());
