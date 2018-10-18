@@ -1,14 +1,14 @@
 # build_id
 
-[![Crates.io](https://img.shields.io/crates/v/build_id.svg?style=flat-square&maxAge=86400)](https://crates.io/crates/build_id)
-[![Apache-2.0 licensed](https://img.shields.io/crates/l/build_id.svg?style=flat-square&maxAge=2592000)](LICENSE.txt)
+[![Crates.io](https://img.shields.io/crates/v/build_id.svg?maxAge=86400)](https://crates.io/crates/build_id)
+[![Apache-2.0 licensed](https://img.shields.io/crates/l/build_id.svg?maxAge=2592000)](LICENSE.txt)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/alecmocatta/build_id?branch=master&svg=true)](https://ci.appveyor.com/project/alecmocatta/build-id)
 [![Build Status](https://circleci.com/gh/alecmocatta/build_id/tree/master.svg?style=shield)](https://circleci.com/gh/alecmocatta/build_id)
 [![Build Status](https://travis-ci.com/alecmocatta/build_id.svg?branch=master)](https://travis-ci.com/alecmocatta/build_id)
 
 [Docs](https://docs.rs/build_id/0.1.2)
 
-Obtain a [`Uuid`](https://docs.rs/uuid/0.6/uuid/) uniquely representing the
+Obtain a [`Uuid`](https://docs.rs/uuid/0.7/uuid/) uniquely representing the
 build of the current binary.
 
 This is intended to be used to check that different processes are indeed
