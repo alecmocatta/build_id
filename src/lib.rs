@@ -30,7 +30,7 @@
 //! `.note.gnu.build-id` on Linux; `LC_UUID` in Mach-O; etc), falling back to
 //! hashing the whole binary.
 
-#![doc(html_root_url = "https://docs.rs/build_id/0.1.1")]
+#![doc(html_root_url = "https://docs.rs/build_id/0.1.2")]
 #![warn(
 	missing_copy_implementations,
 	missing_debug_implementations,
