@@ -22,4 +22,4 @@ maintenance = { status = "passively-maintained" }
 uuid = {version = "0.7", features = ["const_fn"]}
 twox-hash = "1.1"
 byteorder = "1.2"
-proc_self = { version =  "0.1" } #, path = "../proc_self" }
+palaver = "0.2"
