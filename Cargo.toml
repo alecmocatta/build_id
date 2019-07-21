@@ -15,11 +15,11 @@ readme = "README.md"
 edition = "2018"
 
 [badges]
-azure-devops = { project = "alecmocatta/template-rust", pipeline = "tests" }
+azure-devops = { project = "alecmocatta/build_id", pipeline = "tests" }
 maintenance = { status = "passively-maintained" }
 
 [dependencies]
-uuid = {version = "0.7", features = ["const_fn"]}
+uuid = "0.7"
 twox-hash = "1.1"
 byteorder = "1.2"
 palaver = "0.2"
