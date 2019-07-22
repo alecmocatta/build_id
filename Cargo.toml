@@ -19,7 +19,7 @@ azure-devops = { project = "alecmocatta/build_id", pipeline = "tests" }
 maintenance = { status = "passively-maintained" }
 
 [dependencies]
-uuid = "0.7"
+uuid = { version = "0.7", features = ["const_fn"] }
 twox-hash = "1.1"
 byteorder = "1.2"
 palaver = "0.2"
