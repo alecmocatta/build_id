@@ -20,6 +20,6 @@ maintenance = { status = "passively-maintained" }
 
 [dependencies]
 uuid = { version = "0.7", features = ["const_fn"] }
-twox-hash = "1.1"
+twox-hash = { version = "1.1", default-features = false }
 byteorder = "1.2"
 palaver = "0.2"
