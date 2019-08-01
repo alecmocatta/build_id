@@ -42,9 +42,10 @@
 	unused_results,
 	clippy::pedantic
 )] // from https://github.com/rust-unofficial/patterns/blob/master/anti_patterns/deny-warnings.md
-#![allow(clippy::module_name_repetitions)]
 
-use std::{hash::Hasher, io, sync};
+use std::{
+	any::TypeId, hash::{Hash, Hasher}, io, sync
+};
 use uuid::Uuid;
 
 static mut BUILD_ID: Uuid = Uuid::nil();
@@ -90,30 +91,52 @@ pub fn get() -> Uuid {
 		BUILD_ID
 	}
 }
-fn calculate() -> Uuid {
-	let mut hasher = twox_hash::XxHash::with_seed(0);
 
-	// let a = |x:()|x;
-	// let b = |x:u8|x;
-	// hasher.write_u64(type_id(&a));
-	// hasher.write_u64(type_id(&b));
-
+#[allow(clippy::needless_pass_by_value)]
+fn from_header<H: Hasher>(_hasher: H) -> Result<H, ()> {
 	// LC_UUID https://opensource.apple.com/source/libsecurity_codesigning/libsecurity_codesigning-55037.6/lib/machorep.cpp https://stackoverflow.com/questions/10119700/how-to-get-mach-o-uuid-of-a-running-process
 	// .note.gnu.build-id https://github.com/golang/go/issues/21564 https://github.com/golang/go/blob/178307c3a72a9da3d731fecf354630761d6b246c/src/cmd/go/internal/buildid/buildid.go
-	let file = palaver::env::exe().unwrap();
-	let _ = io::copy(&mut &file, &mut HashWriter(&mut hasher)).unwrap();
+	Err(())
+}
+fn from_exe<H: Hasher>(mut hasher: H) -> Result<H, ()> {
+	if cfg!(miri) {
+		return Err(());
+	}
+	let file = palaver::env::exe().map_err(drop)?;
+	let _ = io::copy(&mut &file, &mut HashWriter(&mut hasher)).map_err(drop)?;
+	Ok(hasher)
+}
+fn from_type_id<H: Hasher>(mut hasher: H) -> Result<H, ()> {
+	fn type_id_of<T: 'static>(_: &T) -> TypeId {
+		TypeId::of::<T>()
+	}
+	TypeId::of::<()>().hash(&mut hasher);
+	TypeId::of::<u8>().hash(&mut hasher);
+	let a = |x: ()| x;
+	type_id_of(&a).hash(&mut hasher);
+	let b = |x: u8| x;
+	type_id_of(&b).hash(&mut hasher);
+	Ok(hasher)
+}
+
+fn calculate() -> Uuid {
+	let hasher = twox_hash::XxHash::with_seed(0);
+
+	let hasher = from_header(hasher)
+		.or_else(|()| from_exe(hasher))
+		.unwrap_or(hasher);
+	let mut hasher = from_type_id(hasher).unwrap();
 
 	let mut bytes = [0; 16];
-	<byteorder::NativeEndian as byteorder::ByteOrder>::write_u64(&mut bytes, hasher.finish());
+	<byteorder::NativeEndian as byteorder::ByteOrder>::write_u64(&mut bytes[..8], hasher.finish());
+	hasher.write_u8(0);
+	<byteorder::NativeEndian as byteorder::ByteOrder>::write_u64(&mut bytes[8..], hasher.finish());
+
 	uuid::Builder::from_bytes(bytes)
 		.set_variant(uuid::Variant::RFC4122)
 		.set_version(uuid::Version::Random)
 		.build()
 }
-
-// fn type_id<T:'static>(_: &T) -> u64 {
-// 	unsafe{intrinsics::type_id::<T>()}
-// }
 
 struct HashWriter<T: Hasher>(T);
 impl<T: Hasher> io::Write for HashWriter<T> {
