@@ -4,7 +4,7 @@
 [![MIT / Apache 2.0 licensed](https://img.shields.io/crates/l/build_id.svg?maxAge=2592000)](#License)
 [![Build Status](https://dev.azure.com/alecmocatta/build_id/_apis/build/status/tests?branchName=master)](https://dev.azure.com/alecmocatta/build_id/_build/latest?branchName=master)
 
-[Docs](https://docs.rs/build_id/0.1.5)
+[Docs](https://docs.rs/build_id/0.2.0)
 
 Obtain a [`Uuid`](https://docs.rs/uuid/0.7/uuid/) uniquely representing the
 build of the current binary.

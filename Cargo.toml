@@ -1,6 +1,6 @@
 [package]
 name = "build_id"
-version = "0.1.5"
+version = "0.2.0"
 license = "MIT OR Apache-2.0"
 authors = ["Alec Mocatta <alec@mocatta.net>"]
 categories = ["development-tools","rust-patterns"]
@@ -10,7 +10,7 @@ Obtain a UUID uniquely representing the build of the current binary.
 """
 repository = "https://github.com/alecmocatta/build_id"
 homepage = "https://github.com/alecmocatta/build_id"
-documentation = "https://docs.rs/build_id/0.1.5"
+documentation = "https://docs.rs/build_id/0.2.0"
 readme = "README.md"
 edition = "2018"
 
@@ -19,7 +19,8 @@ azure-devops = { project = "alecmocatta/build_id", pipeline = "tests" }
 maintenance = { status = "passively-maintained" }
 
 [dependencies]
-uuid = { version = "0.7", features = ["const_fn"] }
-twox-hash = { version = "1.1", default-features = false }
 byteorder = "1.2"
+once_cell = "1.2"
 palaver = "0.2"
+twox-hash = { version = "1.1", default-features = false }
+uuid = "0.8"
