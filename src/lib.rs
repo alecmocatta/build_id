@@ -42,14 +42,15 @@
 	unused_results,
 	clippy::pedantic
 )] // from https://github.com/rust-unofficial/patterns/blob/master/anti_patterns/deny-warnings.md
+#![allow(clippy::must_use_candidate)]
 
+use once_cell::sync::Lazy;
 use std::{
-	any::TypeId, hash::{Hash, Hasher}, io, sync
+	any::TypeId, hash::{Hash, Hasher}, io
 };
 use uuid::Uuid;
 
-static mut BUILD_ID: Uuid = Uuid::nil();
-static INIT: sync::Once = sync::Once::new();
+static BUILD_ID: Lazy<Uuid> = Lazy::new(calculate);
 
 /// Returns a [Uuid] uniquely representing the build of the current binary.
 ///
@@ -84,12 +85,7 @@ static INIT: sync::Once = sync::Once::new();
 /// hashing the whole binary.
 #[inline]
 pub fn get() -> Uuid {
-	unsafe {
-		INIT.call_once(|| {
-			BUILD_ID = calculate();
-		});
-		BUILD_ID
-	}
+	*BUILD_ID
 }
 
 #[allow(clippy::needless_pass_by_value)]
