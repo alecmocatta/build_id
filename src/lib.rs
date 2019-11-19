@@ -94,6 +94,9 @@ fn from_header<H: Hasher>(_hasher: H) -> Result<H, ()> {
 	// .note.gnu.build-id https://github.com/golang/go/issues/21564 https://github.com/golang/go/blob/178307c3a72a9da3d731fecf354630761d6b246c/src/cmd/go/internal/buildid/buildid.go
 	Err(())
 }
+#[cfg(target_arch = "wasm32")]
+fn from_exe<H: Hasher>(_hasher: H) -> Result<H, ()> { Err(()) }
+#[cfg(not(target_arch = "wasm32"))]
 fn from_exe<H: Hasher>(mut hasher: H) -> Result<H, ()> {
 	if cfg!(miri) {
 		return Err(());
