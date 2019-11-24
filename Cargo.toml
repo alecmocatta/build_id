@@ -12,6 +12,8 @@ repository = "https://github.com/alecmocatta/build_id"
 homepage = "https://github.com/alecmocatta/build_id"
 documentation = "https://docs.rs/build_id/0.2.1"
 readme = "README.md"
+links = "build_id"
+build = "build.rs"
 edition = "2018"
 
 [badges]
