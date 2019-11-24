@@ -95,7 +95,9 @@ fn from_header<H: Hasher>(_hasher: H) -> Result<H, ()> {
 	Err(())
 }
 #[cfg(target_arch = "wasm32")]
-fn from_exe<H: Hasher>(_hasher: H) -> Result<H, ()> { Err(()) }
+fn from_exe<H: Hasher>(_hasher: H) -> Result<H, ()> {
+	Err(())
+}
 #[cfg(not(target_arch = "wasm32"))]
 fn from_exe<H: Hasher>(mut hasher: H) -> Result<H, ()> {
 	if cfg!(miri) {
