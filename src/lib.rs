@@ -30,7 +30,7 @@
 //! `.note.gnu.build-id` on Linux; `LC_UUID` in Mach-O; etc), falling back to
 //! hashing the whole binary.
 
-#![doc(html_root_url = "https://docs.rs/build_id/0.2.0")]
+#![doc(html_root_url = "https://docs.rs/build_id/0.2.1")]
 #![warn(
 	missing_copy_implementations,
 	missing_debug_implementations,
@@ -95,12 +95,20 @@ fn from_header<H: Hasher>(_hasher: H) -> Result<H, ()> {
 	Err(())
 }
 fn from_exe<H: Hasher>(mut hasher: H) -> Result<H, ()> {
-	if cfg!(miri) {
-		return Err(());
+	#[cfg(not(target_arch = "wasm32"))]
+	{
+		if cfg!(miri) {
+			return Err(());
+		}
+		let file = palaver::env::exe().map_err(drop)?;
+		let _ = io::copy(&mut &file, &mut HashWriter(&mut hasher)).map_err(drop)?;
+		Ok(hasher)
 	}
-	let file = palaver::env::exe().map_err(drop)?;
-	let _ = io::copy(&mut &file, &mut HashWriter(&mut hasher)).map_err(drop)?;
-	Ok(hasher)
+	#[cfg(target_arch = "wasm32")]
+	{
+		let _ = &mut hasher;
+		Err(())
+	}
 }
 fn from_type_id<H: Hasher>(mut hasher: H) -> Result<H, ()> {
 	fn type_id_of<T: 'static>(_: &T) -> TypeId {
@@ -150,14 +158,19 @@ impl<T: Hasher> io::Write for HashWriter<T> {
 
 #[cfg(test)]
 mod test {
+	use wasm_bindgen_test::wasm_bindgen_test;
+
 	#[test]
+	#[wasm_bindgen_test]
 	fn brute() {
 		let x = super::calculate();
 		for _ in 0..1000 {
 			assert_eq!(x, super::calculate());
 		}
 	}
+
 	#[test]
+	#[wasm_bindgen_test]
 	fn get() {
 		let x = super::calculate();
 		assert_eq!(x, super::get());
