@@ -30,4 +30,4 @@ uuid = "0.8"
 palaver = "0.2"
 
 [dev-dependencies]
-wasm-bindgen-test = "0.2"
+wasm-bindgen-test = "0.3"
