@@ -153,14 +153,19 @@ impl<T: Hasher> io::Write for HashWriter<T> {
 
 #[cfg(test)]
 mod test {
+	use wasm_bindgen_test::wasm_bindgen_test;
+
 	#[test]
+	#[wasm_bindgen_test]
 	fn brute() {
 		let x = super::calculate();
 		for _ in 0..1000 {
 			assert_eq!(x, super::calculate());
 		}
 	}
+
 	#[test]
+	#[wasm_bindgen_test]
 	fn get() {
 		let x = super::calculate();
 		assert_eq!(x, super::get());
