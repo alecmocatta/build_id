@@ -94,18 +94,21 @@ fn from_header<H: Hasher>(_hasher: H) -> Result<H, ()> {
 	// .note.gnu.build-id https://github.com/golang/go/issues/21564 https://github.com/golang/go/blob/178307c3a72a9da3d731fecf354630761d6b246c/src/cmd/go/internal/buildid/buildid.go
 	Err(())
 }
-#[cfg(target_arch = "wasm32")]
-fn from_exe<H: Hasher>(_hasher: H) -> Result<H, ()> {
-	Err(())
-}
-#[cfg(not(target_arch = "wasm32"))]
 fn from_exe<H: Hasher>(mut hasher: H) -> Result<H, ()> {
-	if cfg!(miri) {
-		return Err(());
+	#[cfg(not(target_arch = "wasm32"))]
+	{
+		if cfg!(miri) {
+			return Err(());
+		}
+		let file = palaver::env::exe().map_err(drop)?;
+		let _ = io::copy(&mut &file, &mut HashWriter(&mut hasher)).map_err(drop)?;
+		Ok(hasher)
 	}
-	let file = palaver::env::exe().map_err(drop)?;
-	let _ = io::copy(&mut &file, &mut HashWriter(&mut hasher)).map_err(drop)?;
-	Ok(hasher)
+	#[cfg(target_arch = "wasm32")]
+	{
+		let _ = &mut hasher;
+		Err(())
+	}
 }
 fn from_type_id<H: Hasher>(mut hasher: H) -> Result<H, ()> {
 	fn type_id_of<T: 'static>(_: &T) -> TypeId {
