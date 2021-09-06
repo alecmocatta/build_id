@@ -46,7 +46,11 @@
 
 use once_cell::sync::Lazy;
 use std::{
-	any::TypeId, hash::{Hash, Hasher}, io
+	any::TypeId,
+	env,
+	fs::File,
+	hash::{Hash, Hasher},
+	io,
 };
 use uuid::Uuid;
 
@@ -100,7 +104,7 @@ fn from_exe<H: Hasher>(mut hasher: H) -> Result<H, ()> {
 		if cfg!(miri) {
 			return Err(());
 		}
-		let file = palaver::env::exe().map_err(drop)?;
+		let file = File::open(env::current_exe().map_err(drop)?).map_err(drop)?;
 		let _ = io::copy(&mut &file, &mut HashWriter(&mut hasher)).map_err(drop)?;
 		Ok(hasher)
 	}
