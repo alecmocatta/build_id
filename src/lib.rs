@@ -110,7 +110,7 @@ fn from_exe<H: Hasher>(mut hasher: H) -> Result<H, ()> {
 		Err(())
 	}
 }
-fn from_type_id<H: Hasher>(mut hasher: H) -> Result<H, ()> {
+fn from_type_id<H: Hasher>(mut hasher: H) -> H {
 	fn type_id_of<T: 'static>(_: &T) -> TypeId {
 		TypeId::of::<T>()
 	}
@@ -120,7 +120,7 @@ fn from_type_id<H: Hasher>(mut hasher: H) -> Result<H, ()> {
 	type_id_of(&a).hash(&mut hasher);
 	let b = |x: u8| x;
 	type_id_of(&b).hash(&mut hasher);
-	Ok(hasher)
+	hasher
 }
 
 fn calculate() -> Uuid {
@@ -129,7 +129,7 @@ fn calculate() -> Uuid {
 	let hasher = from_header(hasher)
 		.or_else(|()| from_exe(hasher))
 		.unwrap_or(hasher);
-	let mut hasher = from_type_id(hasher).unwrap();
+	let mut hasher = from_type_id(hasher);
 
 	let mut bytes = [0; 16];
 	<byteorder::NativeEndian as byteorder::ByteOrder>::write_u64(&mut bytes[..8], hasher.finish());
