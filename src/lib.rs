@@ -18,9 +18,9 @@
 //! # let remote_build_id = build_id::get();
 //! let local_build_id = build_id::get();
 //! if local_build_id == remote_build_id {
-//! 	println!("We're running the same binary as remote!");
+//!     println!("We're running the same binary as remote!");
 //! } else {
-//! 	println!("We're running a different binary to remote");
+//!     println!("We're running a different binary to remote");
 //! }
 //! ```
 //!
@@ -72,9 +72,9 @@ static BUILD_ID: Lazy<Uuid> = Lazy::new(calculate);
 /// # let remote_build_id = build_id::get();
 /// let local_build_id = build_id::get();
 /// if local_build_id == remote_build_id {
-/// 	println!("We're running the same binary as remote!");
+///     println!("We're running the same binary as remote!");
 /// } else {
-/// 	println!("We're running a different binary to remote");
+///     println!("We're running a different binary to remote");
 /// }
 /// ```
 ///
@@ -97,10 +97,11 @@ fn from_header<H: Hasher>(_hasher: H) -> Result<H, ()> {
 fn from_exe<H: Hasher>(mut hasher: H) -> Result<H, ()> {
 	#[cfg(not(target_arch = "wasm32"))]
 	{
+		use std::{env, fs::File};
 		if cfg!(miri) {
 			return Err(());
 		}
-		let file = palaver::env::exe().map_err(drop)?;
+		let file = File::open(env::current_exe().map_err(drop)?).map_err(drop)?;
 		let _ = io::copy(&mut &file, &mut HashWriter(&mut hasher)).map_err(drop)?;
 		Ok(hasher)
 	}
@@ -110,7 +111,7 @@ fn from_exe<H: Hasher>(mut hasher: H) -> Result<H, ()> {
 		Err(())
 	}
 }
-fn from_type_id<H: Hasher>(mut hasher: H) -> Result<H, ()> {
+fn from_type_id<H: Hasher>(mut hasher: H) -> H {
 	fn type_id_of<T: 'static>(_: &T) -> TypeId {
 		TypeId::of::<T>()
 	}
@@ -120,7 +121,7 @@ fn from_type_id<H: Hasher>(mut hasher: H) -> Result<H, ()> {
 	type_id_of(&a).hash(&mut hasher);
 	let b = |x: u8| x;
 	type_id_of(&b).hash(&mut hasher);
-	Ok(hasher)
+	hasher
 }
 
 fn calculate() -> Uuid {
@@ -129,7 +130,7 @@ fn calculate() -> Uuid {
 	let hasher = from_header(hasher)
 		.or_else(|()| from_exe(hasher))
 		.unwrap_or(hasher);
-	let mut hasher = from_type_id(hasher).unwrap();
+	let mut hasher = from_type_id(hasher);
 
 	let mut bytes = [0; 16];
 	<byteorder::NativeEndian as byteorder::ByteOrder>::write_u64(&mut bytes[..8], hasher.finish());
