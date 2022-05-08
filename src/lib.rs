@@ -46,7 +46,7 @@
 
 use once_cell::sync::Lazy;
 use std::{
-	any::TypeId, env, fs::File, hash::{Hash, Hasher}, io
+	any::TypeId, hash::{Hash, Hasher}, io
 };
 use uuid::Uuid;
 
@@ -97,6 +97,7 @@ fn from_header<H: Hasher>(_hasher: H) -> Result<H, ()> {
 fn from_exe<H: Hasher>(mut hasher: H) -> Result<H, ()> {
 	#[cfg(not(target_arch = "wasm32"))]
 	{
+		use std::{env, fs::File};
 		if cfg!(miri) {
 			return Err(());
 		}
