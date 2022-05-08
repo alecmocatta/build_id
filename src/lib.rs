@@ -18,9 +18,9 @@
 //! # let remote_build_id = build_id::get();
 //! let local_build_id = build_id::get();
 //! if local_build_id == remote_build_id {
-//! 	println!("We're running the same binary as remote!");
+//!     println!("We're running the same binary as remote!");
 //! } else {
-//! 	println!("We're running a different binary to remote");
+//!     println!("We're running a different binary to remote");
 //! }
 //! ```
 //!
@@ -72,9 +72,9 @@ static BUILD_ID: Lazy<Uuid> = Lazy::new(calculate);
 /// # let remote_build_id = build_id::get();
 /// let local_build_id = build_id::get();
 /// if local_build_id == remote_build_id {
-/// 	println!("We're running the same binary as remote!");
+///     println!("We're running the same binary as remote!");
 /// } else {
-/// 	println!("We're running a different binary to remote");
+///     println!("We're running a different binary to remote");
 /// }
 /// ```
 ///
