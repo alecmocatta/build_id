@@ -21,10 +21,10 @@ azure-devops = { project = "alecmocatta/build_id", pipeline = "tests" }
 maintenance = { status = "passively-maintained" }
 
 [dependencies]
-byteorder = "1.2"
-once_cell = "1.2"
-twox-hash = { version = "1.1", default-features = false }
-uuid = "1.1"
+byteorder = "1.4"
+once_cell = "1.17"
+twox-hash = { version = "1.6", default-features = false }
+uuid = "1.3"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 palaver = "0.2"
